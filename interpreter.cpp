@@ -1,4 +1,5 @@
 #include "interpreter.h"
+#include <cstring>
 
 table::table(vector<string> column_names)
 {
@@ -18,6 +19,7 @@ void table::add_row(map<string, string> row)
 
 void table::display()//change to make it display like a table
 {
+	cout<<endl;
 	for(auto col : t)
 	{
 		cout << col.first << " : ";
@@ -57,6 +59,74 @@ void table::del_row(int row_num)//delete does not work. have to use references??
 }
 
 table::~table()
+{
+
+}
+
+void table::interpret(char query[])
+{
+
+	cout<<query<<endl;
+	vector<string> tokens;
+	char *word = strtok(query, " ");
+
+	while (word != NULL)
+	{
+		tokens.push_back(word);
+		word = strtok(NULL, " ");
+	}
+	string first = *tokens.begin();
+
+	if(strcmp("SELECT",first.c_str())==0)
+	{
+	  selectfrom(tokens[1]);
+	}
+	if(strcmp("DELETE",first.c_str())==0)
+	{
+	  deletewhere(tokens[4],tokens[6]);
+	}
+
+}
+
+void table::selectfrom (string colname)
+{
+	cout<<colname<<" : ";
+	for(auto col : t)
+	{
+		if( strcmp(col.first.c_str(),colname.c_str())==0)
+		{
+			for(auto row : col.second)
+				cout << row << " ";
+			cout << "\n\n";
+		}
+	}
+}
+
+void table::deletewhere(string colname,string val)
+{
+		for(auto col: t)
+		{
+				if( strcmp(col.first.c_str(),colname.c_str())==0)
+				{
+					int x= 0;
+					for(	vector<string>::iterator ite = col.second.begin(); ite!=col.second.end();++ite,++x)
+					{
+					//	cout<<(*ite).c_str();
+						if(strcmp((*ite).c_str(),val.c_str())==0)
+						{
+								del_row(x);
+						}
+					}
+				}
+		}
+}
+
+Context::Context()
+{
+
+}
+
+Context::~Context()
 {
 
 }
