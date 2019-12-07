@@ -11,11 +11,16 @@ int main(int argc, char const *argv[])
 	t.display();
 	t.add_row(m);
 	t.display();
+	t.del_row(0);
+	t.display();
 	t.add_row(n);
 	t.display();
-	//t.add_row(o);
-	//t.display();
+	t.add_row(o);
+	t.display();
+	t.add_row(m);
+	t.display();
 	t.del_row(1);
 	t.display();
+
 	return 0;
 }
