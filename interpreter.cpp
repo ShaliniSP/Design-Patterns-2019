@@ -25,15 +25,21 @@ void table::display()//change to make it display like a table
 			cout << row << " ";
 		cout << '\n';
 	}
+	cout<< '\n';
 }
 
 void table::del_row(int row_num)//delete does not work. have to use references??
 {
+
 	for(auto col: t)
 	{
 		vector<string> v = col.second;
-		v.erase(v.begin() + row_num);
-		col.second = v;
+
+
+		auto rem = v.begin() + row_num;
+		cout<<*rem<<"\n";
+		t[col.first].erase(rem);
+
 	}
 }
 
