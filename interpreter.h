@@ -21,20 +21,55 @@ public:
 	//table& operator=(const table&) = delete;
 	void add_row(map<string, string>);
 	void display();
+	void sel_row(string column_name, /*function pointer with bool*/); 
 	void del_row(int row_num); //have to change to take predicate
-	void interpret(char []);
-	void selectfrom(string colname);
-	void deletewhere(string colname,string val);
-
+	
 	~table();
 };
 
 class Context
 {
+	private:
+		map<string, vector<table>> tables ;
+		table *t;	//To store context of which table is being accessed
+		string column;	//To store context of which column is being accessed
+		//Predicate for where
 
-		public:
-			Context();
-			~Context();
+	public:
+		Context();
+		~Context();
+		//setTable()
+		//setColumn
 
 };
+
+class Expression
+{
+	virtual vector<string> interpret(Context ctx) = 0;
+}
+
+class Insert : public Expression
+{
+
+}
+
+class Select : public Expression
+{
+
+}
+
+class From : public Expression
+{
+
+}
+
+class When : public Expression
+{
+
+}
+
+class Delete : public Expression
+{
+
+}
 #endif
