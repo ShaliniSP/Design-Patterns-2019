@@ -1,0 +1,15 @@
+interpreter.o: interpreter.cpp interpreter.h database.h table.h \
+ language.h expression.h predicates.h
+expression.o: expression.cpp expression.h interpreter.h database.h \
+ table.h language.h predicates.h
+client.o: client.cpp interpreter.h database.h table.h language.h \
+ expression.h predicates.h sql.h rest.h
+predicates.o: predicates.cpp predicates.h
+table.o: table.cpp table.h
+database.o: database.cpp database.h table.h
+sql.o: sql.cpp sql.h language.h interpreter.h database.h table.h \
+ expression.h predicates.h
+rest.o: rest.cpp rest.h language.h interpreter.h database.h table.h \
+ expression.h predicates.h
+language.o: language.cpp language.h interpreter.h database.h table.h \
+ expression.h predicates.h

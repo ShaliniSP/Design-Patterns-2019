@@ -29,16 +29,14 @@ vector<vector<string>> Values::interpret(Context &ctx)
 {
 	Table t = ctx.get_table();
 	t.add_row(row);
-	//t.display();
 	ctx.db.tables[ctx.table] = t;
-	//ctx.db.add_table(ctx.table, t);
 	return {{"Row added successfully"}};
 }
 
 From::From()
 {}
 
-From::From(string table_name, Select s)//: table(table_name), select(s), del(Delwhere(string str(" "), isEqual equal(string str(" "))))
+From::From(string table_name, Select s)
 {
 	table = table_name;
 	select = s;
@@ -47,7 +45,7 @@ From::From(string table_name, Select s)//: table(table_name), select(s), del(Del
 	del = Delwhere(temp, equal);
 }
 
-From::From(string table_name, Delwhere d)//: table(table_name), select(s),
+From::From(string table_name, Delwhere d)
 {
 	table = table_name;
 	del = d;
