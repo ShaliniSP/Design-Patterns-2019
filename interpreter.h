@@ -62,6 +62,7 @@ class Context
 		void clear(); //To clear context state
 		Table get_table();
 		vector<string> get_column();
+		vector<vector<string>> get_column(int);
 		vector<vector<string>> search_on_filter(string, function<bool(string)>);
 		void delete_on_filter(function<bool(string, string)>);
 };
@@ -114,22 +115,39 @@ class Insert : public Expression
 		vector<vector<string>> interpret(Context ctx); 
 };
 
+class Where : public Expression
+{
+	private:
+		function<bool(string)> pred;
+	public:
+		Where();
+		Where(function<bool(string)>);
+};
 
-// class Select : public Expression
-// {
-// 	private:
-		
-// };
+class Select : public Expression
+{
+	private:
+		string column;
+		//Where where;
+	public:
+		Select();
+		Select(string);
+		//Select(string, Where);
+		vector<vector<string>> interpret(Context ctx);
+};
 
-// class From : public Expression
-// {
-
-// };
-
-// class When : public Expression
-// {
-
-// };
+class From : public Expression
+{
+	private:
+		string table;
+		Select select;
+		//Del del;
+	public:
+		From();
+		From(string, Select);
+		//From(string, Delete);
+		vector<vector<string>> interpret(Context ctx);
+};
 
 // class Delete : public Expression
 // {

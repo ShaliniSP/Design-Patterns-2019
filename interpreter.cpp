@@ -189,9 +189,19 @@ vector<string> Context::get_column()
 			break;
 		}
 	}
-
 }
 
+vector<vector<string>> Context::get_column(int i)
+{
+	Table current_table = get_table();
+	vector<vector<string>> columns;
+
+	for(auto col: current_table.t)
+	{
+		columns.push_back(col.second);
+	}
+	return columns;
+}
 
 vector<vector<string>> Context::search_on_filter(string column_name, function<bool(string)> pred) //Return indices - rows where filter is true. Needs to be passed to sel_row to return the row
 {
@@ -270,7 +280,6 @@ Insert::Insert(string table_name, Values v): table(table_name), values(v)
 vector<vector<string>> Insert::interpret(Context ctx)
 {
 	ctx.set_table(table);
-	Table t = ctx.get_table();
 	return values.interpret(ctx);
 }
 
@@ -289,6 +298,54 @@ vector<vector<string>> Values::interpret(Context ctx)
 	ctx.db.add_table(ctx.table, t);
 	return {{"Row added successfully"}};
 }
+
+From::From()
+{}
+
+From::From(string table_name, Select s): table(table_name), select(s)
+{}
+
+vector<vector<string>> From::interpret(Context ctx)
+{
+	ctx.set_table(table);
+	return select.interpret(ctx);
+}
+
+Select::Select()
+{}
+
+Select::Select(string column_name):column(column)
+{}
+
+// Select::Select(string column_name, Where w): column(column_name), where(w)
+// {}
+
+vector<vector<string>> Select::interpret(Context ctx)
+{
+	ctx.set_column(column);
+	vector<vector<string>> result;
+	// if(where)
+	// {
+	// 	return where.interpret(ctx);
+	// }
+	//else
+	{
+		if(column == "*")
+			return ctx.get_column(1);
+		else
+		{
+			result.push_back(ctx.get_column());
+			return result;
+		}
+
+	}
+}
+
+Where::Where()
+{}
+
+Where::Where(function<bool(string)> predicate): pred(predicate)
+{}
 
 void display_result(string query, vector<vector<string>> result)
 {
