@@ -8,6 +8,7 @@ int main(int argc, char const *argv[])
 {
 	Database db= Database();
 
+	cout<<"DATABASE SYSTEM\n\n";
 	//Table 1
 	vector<string> col_names{"A", "B", "C"};
 	string table_name = "t";
@@ -37,49 +38,104 @@ int main(int argc, char const *argv[])
 	db.display_tables();
 
 
-
 	//Evaluating queries:
-	Context ctx = Context(db);
-
-	string lang_name= "SQL";
-	string query1 = "INSERT INTO t values A:d,B:i,C:y";
-	string query2 = "SELECT * FROM t WHERE B = b";
-  	string query3 = "DELETE FROM t";
-	
+	int choice = 1;
+	string lang_name;
+	string query;
 	vector<vector<string>> result;
 
-	if(lang_name=="SQL")
+
+	while(choice!=3)
 	{
-		Language *l = new SQL(query1);
-		l->tokenize();
-		result= l->evaluate_query(ctx);
+		cout<<"\n\nMENU\n-------------\n(1)SQL-like\n(2)REST-like\n(3)Exit\nChoose language :";
+		cin>>choice;
+
+		Context ctx = Context(db);
+		if(choice==1)
+		{
+				cout<<"Enter query : ";
+				query ="SELECT * from t where B = b";
+				//getline(cin,query);
+				//cin>>query;
+				cout<<query;
+				//query ="SELECT * FROM t";
+				lang_name= "SQL";
+
+				Language *l = new SQL(query);
+				l->tokenize();
+				result= l->evaluate_query(ctx);
+		}
+		else if(choice==2)
+		{
+			cout<<"Enter query : ";
+			getline(cin,query);
+				lang_name= "REST_methods";
+				Language *l = new REST_methods(query);
+				l->tokenize();
+				result= l->evaluate_query(ctx);
+		}
+		else if(choice==3)
+		{
+			exit(1);
+		}
+		else
+		{
+			cout<<"\nWrong entry";
+			continue;
+		}
+		display_result ( query, result );
+		ctx.clear();
+		db.display_tables();
+		
 	}
 
-	display_result ( query1, result );
-	ctx.db.display_tables();
-	ctx.clear();
 
-	if(lang_name=="SQL")
-	{
-		Language *l = new SQL(query2);
-		l->tokenize();
-		result= l->evaluate_query(ctx);
-	}
 
-	display_result ( query2, result );
-	ctx.db.display_tables();
-	ctx.clear();
-
-	if(lang_name=="SQL")
-	{
-		Language *l = new SQL(query3);
-		l->tokenize();
-		result= l->evaluate_query(ctx);
-	}
-
-	display_result ( query3, result );
-	ctx.db.display_tables();
-	ctx.clear();
+// 	string lang_name= "SQL";
+// 	string query1 = "INSERT INTO t values A:d,B:i,C:y";
+// //	string query2 = "SELECT * FROM t";
+// 	string query2 = "DELETE FROM t WHERE B = b";
+// 	//string query2 = "SELECT srn FROM school WHERE grade = A";
+// 	//string query2 = "INSERT INTO school values srn:3,name:Please,grade:A";
+// 	vector<vector<string>> result;
+//
+// 	if(lang_name=="SQL")
+// 	{
+// 		Language *l = new SQL(query1);
+// 		l->tokenize();
+// 		result= l->evaluate_query(ctx);
+// 	}
+//
+// 	display_result ( query1, result );
+// 	ctx.db.display_tables();
+// 	ctx.clear();
+//
+// 	if(lang_name=="SQL")
+// 	{
+// 		Language *l = new SQL(query2);
+// 		l->tokenize();
+// 		result= l->evaluate_query(ctx);
+// 	}
+//
+// 	display_result ( query2, result );
+// 	ctx.db.display_tables();
+// 	ctx.clear();
+//
+// 	lang_name= "REST_methods";
+// 	//string query3 = "IN school POST DATA srn:5,name:Jack,grade:C";
+// 	string query3 = "IN school GET srn SUCH THAT grade != B";
+// 	//string query3 = "FROM t DELETE IF A = p";
+//
+// 	if(lang_name=="REST_methods")
+// 	{
+// 		Language *l = new REST_methods(query3);
+// 		l->tokenize();
+// 		result= l->evaluate_query(ctx);
+// 	}
+//
+// 	display_result ( query3, result );
+// 	ctx.db.display_tables();
+// 	ctx.clear();
 
 	return 0;
 }
