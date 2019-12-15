@@ -36,7 +36,7 @@ class startsWith
 };
 
 
-Table::Table()
+Table::Table():size(0)
 {}
 
 Table::Table(string table_name, vector<string> column_names)
@@ -51,6 +51,7 @@ Table::Table(string table_name, vector<string> column_names)
 
 Table::Table(const Table& rhs)
 {
+	size = rhs.size;
 	t = rhs.t;
 }
 
@@ -58,6 +59,7 @@ Table& Table::operator=(const Table& rhs)
 {
 	if(this != &rhs)
 	{
+		size = rhs.size;
 		t = rhs.t;
 	}
 	return *this;
@@ -227,6 +229,7 @@ Table Context::get_table()
 	{
 		if(tab.first == table)
 		{
+			cout << tab.second.size;
 			return tab.second;
 		}
 	}
@@ -297,21 +300,32 @@ vector<vector<string>> Context::search_on_filter(string column_name, function<bo
 vector<vector<string>> Context::delete_on_filter(string column_name, function<bool(string)> pred)
 {
 	Table t = get_table();
-	vector<string> filter_column = t.sel_col(column_name);
-	vector<int> indices;
-	for (auto it = find_if(filter_column.begin(), filter_column.end(), pred); it != filter_column.end(); it = find_if(++it, filter_column.end(), pred))
+	string num_of_del_rows;
+	if(column_name == " ")
 	{
-	    indices.push_back(it - filter_column.begin());
+		num_of_del_rows = to_string(t.size);
+		for(int i = t.size-1; i >= 0; --i)
+			t.del_row(i);
 	}
 
-  	for (auto rit = indices.rbegin(); rit!= indices.rend(); ++rit)
+	else
 	{
-		cout << *rit;
-		t.del_row(*rit);
+		vector<string> filter_column = t.sel_col(column_name);
+		vector<int> indices;
+		for (auto it = find_if(filter_column.begin(), filter_column.end(), pred); it != filter_column.end(); it = find_if(++it, filter_column.end(), pred))
+		{
+		    indices.push_back(it - filter_column.begin());
+		}
+
+	  	for (auto rit = indices.rbegin(); rit!= indices.rend(); ++rit)
+		{
+			cout << *rit;
+			t.del_row(*rit);
+		}
+		num_of_del_rows = to_string(indices.size());
 	}
-	
 	db.tables[table] = t;
-	return {{"Deleted ", to_string(indices.size()), " Rows"}};
+	return {{"Deleted ", num_of_del_rows, " Rows"}};	
 }
 
 Context::~Context()
@@ -597,9 +611,12 @@ vector<vector<string>> SQL::evaluate_query(Context &ctx)
 	}
 	else if (strcmp("DELETE",first.c_str())==0)
 	{
-		isEqual equal("b");
-		result = ctx.delete_on_filter(*(tokens.begin()+4), equal);
-		//Expression *q = new F(*(tokens.begin()+2) , Values(insert_map));
+		//ctx.table = "t";
+		//isEqual equal("b");
+		//result = ctx.delete_on_filter(*(tokens.begin()+4), equal);
+		//result = ctx.delete_on_filter(" ", equal);
+		//result = ctx.delete_on_filter(*(tokens.begin()+4), equal);
+		//Expression *q = new From(*(tokens.begin()+2) , Delwhere(insert_map));
 		//result = q->interpret(ctx);
 	}
 	else
