@@ -1,3 +1,4 @@
+/*Context contains the tables. Tables is a map of table name to table. Table is a map of column names to a vector of strings.*/
 #ifndef INTERPRETER
 #define INTERPRETER
 
