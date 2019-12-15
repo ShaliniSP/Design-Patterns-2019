@@ -23,6 +23,17 @@ class isNotEqual
 			return filter_string!=check;
 		}
 };
+class startsWith
+{
+	private:
+		string filter_string;
+	public:
+		startsWith(string s) : filter_string(s){}
+		bool operator()(string check)
+		{
+			return check.find(filter_string)==0;
+		}
+};
 
 
 Table::Table()
@@ -206,19 +217,9 @@ vector<string> Context::get_column()
 			break;
 		}
 	}
+
 }
 
-vector<vector<string>> Context::get_column(int i)
-{
-	Table current_table = get_table();
-	vector<vector<string>> columns;
-
-	for(auto col: current_table.t)
-	{
-		columns.push_back(col.second);
-	}
-	return columns;
-}
 
 vector<vector<string>> Context::search_on_filter(string column_name, function<bool(string)> pred) //Return indices - rows where filter is true. Needs to be passed to sel_row to return the row
 {
@@ -311,7 +312,9 @@ Insert::Insert(string table_name, Values v): table(table_name), values(v)
 vector<vector<string>> Insert::interpret(Context &ctx)
 {
 	ctx.set_table(table);
-	return values.interpret(ctx);
+	vector<vector<string>> temp = values.interpret(ctx);
+
+	return temp;
 }
 
 
@@ -433,20 +436,32 @@ vector<vector<string>> SQL::evaluate_query(Context &ctx)
 
 	if(strcmp("SELECT",first.c_str())==0)
 	{
-			//SELECT A FROM t WHERE B = b
-		ctx.column = "*";
-		if(*(tokens.begin()+6) == "=")
+		//SELECT A FROM t WHERE B = b
+		ctx.column = *(tokens.begin()+1);
+		if(tokens.size()==8)
 		{
-
-			isEqual equal( *(tokens.begin()+7));
-			result = ctx.search_on_filter(*(tokens.begin()+5), equal);
-		//	Expression *q = new From(*(tokens.begin()+3) , Select(*(tokens.begin()+1) ), Where(*(tokens.begin()+5), isEqual(*(tokens.begin()+7))) ));
-		//	result = q->interpret(ctx);
+			if(*(tokens.begin()+6) == "=")
+			{
+				isEqual equal( *(tokens.begin()+7));
+				result = ctx.search_on_filter(*(tokens.begin()+5), equal);
+			//	Expression *q = new From(*(tokens.begin()+3) , Select(*(tokens.begin()+1) ), Where(*(tokens.begin()+5), isEqual(*(tokens.begin()+7))) ));
+			//	result = q->interpret(ctx);
+			}
+			else if(*(tokens.begin()+6) == "!=")
+			{
+				isNotEqual not_equal( *(tokens.begin()+7));
+				result = ctx.search_on_filter(*(tokens.begin()+5), not_equal);
+			}
+			else if(*(tokens.begin()+6) == "startswith")
+			{
+				startsWith sw( *(tokens.begin()+7));
+				result = ctx.search_on_filter(*(tokens.begin()+5), sw);
+			}
 		}
-		else if(*(tokens.begin()+6) == "!=")
+		else
 		{
-			isNotEqual not_equal( *(tokens.begin()+7));
-			result = ctx.search_on_filter(*(tokens.begin()+5), not_equal);
+		// 	Expression *q = new From(*(tokens.begin()+3) , Select(*(tokens.begin()+1) ));
+		// 	result = q->interpret(ctx);
 		}
 
 	}
