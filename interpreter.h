@@ -11,7 +11,7 @@
 #include <cstring>
 using namespace std;
 
-
+void display_result(string,vector<vector<string>> result);
 class Table
 {
 private:
@@ -64,6 +64,26 @@ class Context
 		vector<string> get_column();
 		vector<vector<string>> search_on_filter(string, function<bool(string)>);
 		void delete_on_filter(function<bool(string, string)>);
+};
+
+class Language
+{
+	public:
+		virtual ~Language() = 0;
+		virtual void tokenize() =0 ;
+		virtual vector<vector<string>> evaluate_query() = 0;
+};
+
+class SQL : public Language
+{
+	private:
+		string query;
+	 	vector<string> tokens;
+	public:
+		SQL(string);
+		void tokenize();
+		vector<vector<string>> evaluate_query();
+		~SQL();
 };
 
 class Expression

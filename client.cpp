@@ -36,8 +36,21 @@ int main(int argc, char const *argv[])
 	school.add_row(y);
 	db.add_table(table_name2,school);
 	db.display_tables();
-	db.del_table("school");
-	db.display_tables();
+
+
+	//Evaluating queries:
+	string lang_name= "SQL";
+	string query1 = "INSERT INTO t values A:d,B:i,C:y";
+	string query2 = "SELECT A FROM t WHERE B=b";
+	vector<vector<string>> result;
+	if(lang_name=="SQL")
+	{
+		Language *l = new SQL(query1);
+		l->tokenize();
+		result= l->evaluate_query();
+	}
+
+	display_result ( query1, result );
 	//context.interpret(sql_query);
 	//
 	// t.interpret(sql_query1);

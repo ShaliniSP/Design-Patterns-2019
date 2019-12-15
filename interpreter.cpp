@@ -290,6 +290,77 @@ vector<vector<string>> Values::interpret(Context ctx)
 	return {{"Row added successfully"}};
 }
 
+void display_result(string query, vector<vector<string>> result)
+{
+	cout<<"\n_____________________________________________________\n"<<"Query : "<<query <<endl;
+	cout<<"\nResult of the query is : ";
+
+	for (auto i = result.begin(); i != result.end(); ++i)
+  		for (auto j = (*i).begin(); j != (*i).end(); ++j)
+			   cout << *j << " ";
+			cout<<endl;
+	cout<<"\n_____________________________________________________\n";
+
+}
+
+Language::~Language()
+{
+
+}
+
+SQL::SQL(string q) : query(q)
+{
+
+}
+
+void SQL::tokenize()
+{
+
+ 	//vector<string> tokens;
+	char q[query.size() + 1];
+	query.copy(q, query.size() + 1);
+	q[query.size()] = '\0';
+ 	char *word = strtok(q, " ");
+
+ 	while (word != NULL)
+ 	{
+ 		tokens.push_back(word);
+ 		word = strtok(NULL, " ");
+ 	}
+
+}
+
+vector<vector<string>> SQL::evaluate_query()
+{
+	vector<vector<string>> result;
+	string first = *tokens.begin();
+
+	if(strcmp("SELECT",first.c_str())==0)
+	{
+
+		  //selectfrom(tokens[1]);
+	}
+	else if (strcmp("INSERT",first.c_str())==0)
+	{
+		
+	}
+	else if (strcmp("DELETE",first.c_str())==0)
+	{
+
+	}
+	else
+	{
+		vector<string> res;
+		res.push_back("\nThe given query is not found");
+		result.push_back(res);
+	}
+	return result;
+}
+
+SQL::~SQL()
+{
+
+}
 // void table::interpret(char query[])
 // {
 
