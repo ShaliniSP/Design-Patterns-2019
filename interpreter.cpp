@@ -195,7 +195,7 @@ Table Context::get_table()
 	{
 		if(tab.first == table)
 		{
-			cout << tab.second.size;
+			//cout << tab.second.size;
 			return tab.second;
 		}
 	}
@@ -285,14 +285,14 @@ vector<vector<string>> Context::delete_on_filter(string column_name, function<bo
 
 	  	for (auto rit = indices.rbegin(); rit!= indices.rend(); ++rit)
 		{
-			cout << *rit;
+			//cout << *rit;
 			t.del_row(*rit);
 		}
 		num_of_del_rows = to_string(indices.size());
 	}
 
 	db.tables[table] = t;
-	return {{"Deleted ", num_of_del_rows, " Rows"}};	
+	return {{"Deleted ", num_of_del_rows, " Rows"}};
 }
 
 Context::~Context()
@@ -782,4 +782,3 @@ void display_result(string query, vector<vector<string>> result)
 // {
 
 // }
-

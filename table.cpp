@@ -105,7 +105,7 @@ vector<string> Table::sel_row(int row_num)//returns row as vector of strings
 vector<string> Table::sel_col (string colname)
 {
 	vector<string> column;
-	cout<<colname<<" : ";
+	//cout<<colname<<" : ";
 	for(auto col : t)
 	{
 		if( col.first == colname)
