@@ -1,6 +1,6 @@
 /*Context contains the tables. Tables is a map of table name to table. Table is a map of column names to a vector of strings.*/
 #ifndef INTERPRETER
-#define INTERPRETER 
+#define INTERPRETER
 
 #include <iostream>
 #include <vector>
@@ -14,18 +14,18 @@ using namespace std;
 class Table
 {
 private:
-
+	string name;
 public:
 	map<string, vector<string>> t;
 	Table();
-	Table(vector<string>);
+	Table(string,vector<string>);
 	Table(const Table&);
 	Table& operator=(const Table&);
 	void add_row(map<string, string>);
 	void display();
-	vector<string> sel_row(int row_num); 
+	vector<string> sel_row(int row_num);
 	void del_row(int row_num); //have to change to take predicate
-	
+
 	~Table();
 };
 
@@ -40,7 +40,7 @@ class Context
 	public:
 		Context();
 		~Context();
-		void set_table(string);
+		void set_table(string,Table);
 		void set_column(string);
 		void set_filter(function<bool(string, string)>);
 		void clear(); //To clear context state
@@ -62,6 +62,8 @@ class Insert : public Expression
 
 class Select : public Expression
 {
+	private:
+
 
 };
 

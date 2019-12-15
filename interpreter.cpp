@@ -6,8 +6,9 @@ Table::Table()
 
 }
 
-Table::Table(vector<string> column_names)
+Table::Table(string table_name, vector<string> column_names)
 {
+	name=table_name;
 	for(auto name : column_names)
 	{
 		t.insert(pair<string,vector<string> >(name, vector<string>()));
@@ -20,6 +21,10 @@ void Table::add_row(map<string, string> row)
 	{
 		t[r.first].push_back(r.second);
 	}
+	// Context c= Context();
+	// string table_name = name;
+	// //Table table = t;
+	// c.set_table(table_name, t);
 }
 
 void Table::display()//change to make it display like a table
@@ -96,9 +101,26 @@ Context::Context()
 
 }
 
-void Context::set_table(string table_name)
+void Context::set_table(string table_name, Table table)
 {
-	table = table_name;
+	auto it= tables.find(table_name);
+	if(it==tables.end())
+	{
+		//table is added for the first time
+		tables.insert({table_name, table});
+		for(auto t : tables)
+		{
+			cout<<"The table inserted : "<<t.first;
+			t.second.display();
+		}
+	}
+	else
+	{
+		(it->second) = table;
+		cout<<"\nTable changed: ";
+		(it->second).display();
+
+	}
 	// for(auto t : tables)
 	// {
 	// 	if(t.first == table_name)
@@ -242,5 +264,3 @@ Context::~Context()
 // 				}
 // 		}
 // }
-
-
