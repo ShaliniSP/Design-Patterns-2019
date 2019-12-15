@@ -24,7 +24,7 @@ void Database::add_table(string table_name, Table table)
 void Database::del_table(string table_name)
 {
 	tables.erase(table_name);
-	cout<<"Table "<< table_name<< " delted.\n";
+	//cout<<"Table "<< table_name<< " delted.\n";
 
 }
 

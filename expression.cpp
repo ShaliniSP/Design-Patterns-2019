@@ -57,7 +57,7 @@ From::From(string table_name, Delwhere d)
 vector<vector<string>> From::interpret(Context &ctx)
 {
 	ctx.set_table(table);
-	cout << "From";
+	//cout << "From";
 	if(select.column == " ")
 		return del.interpret(ctx);
 	else
@@ -69,7 +69,7 @@ Select::Select()
 
 Select::Select(string column_name):column(column), isWhere(false)
 {
-	cout << "CTOR CALLEd" << column;
+	//cout << "CTOR CALLEd" << column;
 }
 
 Select::Select(string column_name, Where w): column(column_name), isWhere(where.filter_col == " "? false:true), where(w)
@@ -78,7 +78,7 @@ Select::Select(string column_name, Where w): column(column_name), isWhere(where.
 vector<vector<string>> Select::interpret(Context &ctx)
 {
 	ctx.set_column(column);
-	cout << "COL:" << ctx.column;
+	//cout << "COL:" << ctx.column;
 
 	vector<vector<string>> result;
 	if(isWhere)
@@ -87,7 +87,7 @@ vector<vector<string>> Select::interpret(Context &ctx)
 	}
 	else
 	{
-		cout << "No where";
+		//cout << "No where";
 		if(column == "*")
 			return ctx.get_column(1);
 		else

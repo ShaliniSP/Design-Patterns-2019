@@ -38,7 +38,7 @@ vector<vector<string>> REST_methods::evaluate_query(Context &ctx)
 		 else{
 			 	ctx.column = *(tokens.begin()+3);
 		 }
-		 cout<<tokens.size();
+		 //cout<<tokens.size();
 		if(tokens.size()==9)
 		{
 			if(*(tokens.begin()+7) == "=")

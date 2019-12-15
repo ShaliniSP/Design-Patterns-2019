@@ -44,13 +44,13 @@ int main(int argc, char const *argv[])
 	string query;
 	vector<vector<string>> result;
 
-
+	Context ctx = Context(db);
 	while(choice!= "3")
 	{
 		cout<<"\n\nMENU\n-------------\n(1)SQL-like\n(2)REST-like\n(3)Exit\nChoose language :";
 		getline(cin,choice);
 
-		Context ctx = Context(db);
+
 		if(choice== "1")
 		{
 				cout<<"Enter query : ";
@@ -85,9 +85,9 @@ int main(int argc, char const *argv[])
 			continue;
 		}
 		display_result ( query, result );
-		ctx.clear();
-		db.display_tables();
-		
+
+		ctx.db.display_tables();
+
 	}
 
 

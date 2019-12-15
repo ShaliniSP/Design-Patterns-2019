@@ -57,7 +57,7 @@ vector<vector<string>> SQL::evaluate_query(Context &ctx)
 			//cout << *(tokens.begin()+1);
 			string temp = " ";
 			isEqual equal(temp);
-			Expression *q = new From(*(tokens.begin()+3) , Select(*(tokens.begin()+1), Where(temp, equal)));
+			Expression *q = new From(*(tokens.begin()+3) , Select("*(tokens.begin()+1)", Where(temp, equal)));
 			result = q->interpret(ctx);
 		}
 
