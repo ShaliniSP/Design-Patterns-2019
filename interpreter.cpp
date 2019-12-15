@@ -309,7 +309,7 @@ vector<vector<string>> Context::delete_on_filter(string column_name, function<bo
 		cout << *rit;
 		t.del_row(*rit);
 	}
-	
+
 	db.tables[table] = t;
 	return {{"Deleted ", to_string(indices.size()), " Rows"}};
 }
@@ -407,7 +407,7 @@ From::From(string table_name, Select s)//: table(table_name), select(s), del(Del
 	del = Delwhere(temp, equal);
 }
 
-From::From(string table_name, Delwhere d)//: table(table_name), select(s), 
+From::From(string table_name, Delwhere d)//: table(table_name), select(s),
 {
 	table = table_name;
 	del = d;
@@ -552,7 +552,8 @@ vector<vector<string>> SQL::evaluate_query(Context &ctx)
 			{
 				startsWith sw( *(tokens.begin()+7));
 				Expression *q = new From(*(tokens.begin()+3) , Select(*(tokens.begin()+1) , Where(*(tokens.begin()+5), sw) ));
-				result = q->interpret(ctx);			}
+				result = q->interpret(ctx);
+			}
 		}
 		else
 		{
@@ -597,10 +598,39 @@ vector<vector<string>> SQL::evaluate_query(Context &ctx)
 	}
 	else if (strcmp("DELETE",first.c_str())==0)
 	{
-		isEqual equal("b");
-		result = ctx.delete_on_filter(*(tokens.begin()+4), equal);
-		//Expression *q = new F(*(tokens.begin()+2) , Values(insert_map));
-		//result = q->interpret(ctx);
+			//DELETE FROM t WHERE B = b
+			if(tokens.size()==7)
+			{
+				if(*(tokens.begin()+5) == "=")
+				{
+							isEqual equal(*(tokens.begin()+6));
+							//result = ctx.delete_on_filter(*(tokens.begin()+4), equal);
+							Expression *q = new From(*(tokens.begin()+2) ,Delwhere(*(tokens.begin()+4), equal ));
+							result = q->interpret(ctx);
+				}
+				if(*(tokens.begin()+5) == "!=")
+				{
+							isNotEqual not_equal(*(tokens.begin()+5));
+							//result = ctx.delete_on_filter(*(tokens.begin()+4), equal);
+							Expression *q = new From(*(tokens.begin()+2) ,Delwhere(*(tokens.begin()+4), not_equal ));
+							result = q->interpret(ctx);
+				}
+				if(*(tokens.begin()+5) == "startswith")
+				{
+							startsWith sw(*(tokens.begin()+5));
+							//result = ctx.delete_on_filter(*(tokens.begin()+4), equal);
+							Expression *q = new From(*(tokens.begin()+2) ,Delwhere(*(tokens.begin()+4), sw ));
+							result = q->interpret(ctx);
+				}
+			}
+			else
+			{
+				string temp= " ";
+				isEqual equal(temp);
+				//result = ctx.delete_on_filter(*(tokens.begin()+4), equal);
+				Expression *q = new From(*(tokens.begin()+2) ,Delwhere(temp, equal ));
+				result = q->interpret(ctx);
+			}
 	}
 	else
 	{
@@ -691,7 +721,7 @@ vector<vector<string>> REST_methods::evaluate_query(Context &ctx)
 	else if (strcmp("POST",first.c_str())==0)
 	{
 
-		// "INSERT INTO t values A:d,B:i,C:y";
+
 		map<string, string> insert_map;
 
 		string values = *(tokens.begin()+4);
@@ -722,7 +752,40 @@ vector<vector<string>> REST_methods::evaluate_query(Context &ctx)
 	}
 	else if (strcmp("DELETE",first.c_str())==0)
 	{
-
+			//FROM t DELETE ALL
+			//FROM t DELETE IF B = b
+		if(tokens.size()==7)
+		{
+			if(*(tokens.begin()+5) == "=")
+			{
+						isEqual equal(*(tokens.begin()+6));
+						//result = ctx.delete_on_filter(*(tokens.begin()+4), equal);
+						Expression *q = new From(*(tokens.begin()+1) ,Delwhere(*(tokens.begin()+4), equal ));
+						result = q->interpret(ctx);
+			}
+			if(*(tokens.begin()+5) == "!=")
+			{
+						isNotEqual not_equal(*(tokens.begin()+5));
+						//result = ctx.delete_on_filter(*(tokens.begin()+4), equal);
+						Expression *q = new From(*(tokens.begin()+1) ,Delwhere(*(tokens.begin()+4), not_equal ));
+						result = q->interpret(ctx);
+			}
+			if(*(tokens.begin()+5) == "startswith")
+			{
+						startsWith sw(*(tokens.begin()+5));
+						//result = ctx.delete_on_filter(*(tokens.begin()+4), equal);
+						Expression *q = new From(*(tokens.begin()+1) ,Delwhere(*(tokens.begin()+4), sw ));
+						result = q->interpret(ctx);
+			}
+		}
+		else
+		{
+			string temp= " ";
+			isEqual equal(temp);
+			//result = ctx.delete_on_filter(*(tokens.begin()+4), equal);
+			Expression *q = new From(*(tokens.begin()+1) ,Delwhere(temp, equal ));
+			result = q->interpret(ctx);
+		}
 	}
 	else
 	{

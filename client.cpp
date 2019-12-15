@@ -39,8 +39,8 @@ int main(int argc, char const *argv[])
 
 	string lang_name= "SQL";
 	string query1 = "INSERT INTO t values A:d,B:i,C:y";
-	string query2 = "SELECT * FROM t";
-  	//string query2 = "DELETE FROM t WHERE B = b";
+	//string query2 = "SELECT * FROM t";
+	string query2 = "DELETE FROM t WHERE B = b";
 	//string query2 = "SELECT srn FROM school WHERE grade = A";
 	//string query2 = "INSERT INTO school values srn:3,name:Please,grade:A";
 	vector<vector<string>> result;
@@ -69,7 +69,8 @@ int main(int argc, char const *argv[])
 
 	lang_name= "REST_methods";
 	//string query3 = "IN school POST DATA srn:5,name:Jack,grade:C";
-	string query3 = "IN t GET A SUCH THAT B = b";
+	//string query3 = "IN t GET A SUCH THAT B = b";
+	string query3 = "FROM t DELETE IF A = p";
 
 	if(lang_name=="REST_methods")
 	{
