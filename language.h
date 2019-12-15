@@ -1,6 +1,8 @@
 #ifndef LANGUAGE
 #define LANGUAGE
+
 #include "interpreter.h"
+
 class Language
 {
 	public:

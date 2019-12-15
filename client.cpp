@@ -1,4 +1,7 @@
 #include "interpreter.h"
+#include "language.h"
+#include "expression.h"
+
 
 int main(int argc, char const *argv[])
 {

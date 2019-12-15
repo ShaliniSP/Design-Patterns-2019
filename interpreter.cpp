@@ -1,4 +1,6 @@
 #include "interpreter.h"
+#include "language.h"
+#include "expression.h"
 #include <string>
 
 class isEqual

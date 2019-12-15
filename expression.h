@@ -1,6 +1,8 @@
 #ifndef EXPRESSION
-#define Expression
+#define EXPRESSION
+
 #include "interpreter.h"
+
 class Expression
 {
 public:
