@@ -11,6 +11,7 @@
 #include <cstring>
 using namespace std;
 
+
 class Table
 {
 private:
@@ -29,10 +30,24 @@ public:
 	~Table();
 };
 
-class Context
+class Database
 {
 	private:
 		map<string, Table> tables ;
+	public:
+		Database();
+		~Database();
+		void add_table(string, Table);
+		void display_tables();
+		void del_table(string);
+
+};
+
+
+class Context
+{
+	private:
+		Database db;
 		string table;	//To store context of which table is being accessed
 		string column;	//To store context of which column is being accessed
 		function<bool(string, string)> pred;//Predicate for where
