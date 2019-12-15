@@ -24,6 +24,7 @@ public:
 	void add_row(map<string, string>);
 	void display();
 	vector<string> sel_row(int row_num);
+	vector<string> sel_col (string colname);
 	void del_row(int row_num); //have to change to take predicate
 
 	~Table();
@@ -40,13 +41,13 @@ class Context
 	public:
 		Context();
 		~Context();
-		void set_table(string,Table);
+		void set_table(string);
 		void set_column(string);
 		void set_filter(function<bool(string, string)>);
 		void clear(); //To clear context state
 		Table get_table();
 		vector<string> get_column();
-		vector<vector<string>> search_on_filter(function<bool(string)>);
+		vector<vector<string>> search_on_filter(string, function<bool(string)>);
 		void delete_on_filter(function<bool(string, string)>);
 };
 

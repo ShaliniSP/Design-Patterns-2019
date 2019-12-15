@@ -15,6 +15,20 @@ Table::Table(string table_name, vector<string> column_names)
 	}
 }
 
+Table::Table(const Table& rhs)
+{
+	t = rhs.t;
+}
+
+Table& Table::operator=(const Table& rhs)
+{
+	if(this != &rhs)
+	{
+		t = rhs.t;
+	}
+	return *this;
+}
+
 void Table::add_row(map<string, string> row)
 {
 	for(auto r: row)
@@ -77,18 +91,17 @@ vector<string> Table::sel_row(int row_num)//returns row as vector of strings
 	return row;
 }
 
-Table::Table(const Table& rhs)
+vector<string> Table::sel_col (string colname)
 {
-	t = rhs.t;
-}
-
-Table& Table::operator=(const Table& rhs)
-{
-	if(this != &rhs)
+	vector<string> column;
+	cout<<colname<<" : ";
+	for(auto col : t)
 	{
-		t = rhs.t;
+		if( col.first == colname)
+		{
+			return col.second;
+		}
 	}
-	return *this;
 }
 
 Table::~Table()
@@ -101,26 +114,27 @@ Context::Context()
 
 }
 
-void Context::set_table(string table_name, Table table)
+void Context::set_table(string table_name)
 {
-	auto it= tables.find(table_name);
-	if(it==tables.end())
-	{
-		//table is added for the first time
-		tables.insert({table_name, table});
-		for(auto t : tables)
-		{
-			cout<<"The table inserted : "<<t.first;
-			t.second.display();
-		}
-	}
-	else
-	{
-		(it->second) = table;
-		cout<<"\nTable changed: ";
-		(it->second).display();
+	// auto it= tables.find(table_name);
+	// if(it==tables.end())
+	// {
+	// 	//table is added for the first time
+	// 	tables.insert({table_name, table});
+	// 	for(auto t : tables)
+	// 	{
+	// 		cout<<"The table inserted : "<<t.first;
+	// 		t.second.display();
+	// 	}
+	// }
+	// else
+	// {
+	// 	(it->second) = table;
+	// 	cout<<"\nTable changed: ";
+	// 	(it->second).display();
 
-	}
+	// }
+	table = table_name;
 	// for(auto t : tables)
 	// {
 	// 	if(t.first == table_name)
@@ -186,9 +200,10 @@ vector<string> Context::get_column()
 }
 
 
-vector<vector<string>> Context::search_on_filter(function<bool(string)> pred) //Return indices - rows where filter is true. Needs to be passed to sel_row to return the row
+vector<vector<string>> Context::search_on_filter(string column_name, function<bool(string)> pred) //Return indices - rows where filter is true. Needs to be passed to sel_row to return the row
 {
-	vector<string> column = get_column();
+	Table t = get_table();
+	vector<string> column = t.sel_col(column_name);
 	vector<int> indices;
 	for (auto it = find_if(column.begin(), column.end(), pred); it != column.end(); it = find_if(++it, column.end(), pred))
 	{
