@@ -39,23 +39,23 @@ int main(int argc, char const *argv[])
 
 
 	//Evaluating queries:
-	int choice = 1;
+	string choice = "1";
 	string lang_name;
 	string query;
 	vector<vector<string>> result;
 
 
-	while(choice!=3)
+	while(choice!= "3")
 	{
 		cout<<"\n\nMENU\n-------------\n(1)SQL-like\n(2)REST-like\n(3)Exit\nChoose language :";
-		cin>>choice;
+		getline(cin,choice);
 
 		Context ctx = Context(db);
-		if(choice==1)
+		if(choice== "1")
 		{
 				cout<<"Enter query : ";
-				query ="SELECT * from t where B = b";
-				//getline(cin,query);
+				//query ="SELECT * from t where B = b";
+				getline(cin,query);
 				//cin>>query;
 				cout<<query;
 				//query ="SELECT * FROM t";
@@ -65,16 +65,17 @@ int main(int argc, char const *argv[])
 				l->tokenize();
 				result= l->evaluate_query(ctx);
 		}
-		else if(choice==2)
+		else if(choice== "2")
 		{
 			cout<<"Enter query : ";
 			getline(cin,query);
+			cout << query;
 				lang_name= "REST_methods";
 				Language *l = new REST_methods(query);
 				l->tokenize();
 				result= l->evaluate_query(ctx);
 		}
-		else if(choice==3)
+		else if(choice=="3")
 		{
 			exit(1);
 		}
