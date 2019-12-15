@@ -33,9 +33,8 @@ public:
 
 class Database
 {
-	private:
-		map<string, Table> tables ;
 	public:
+		map<string, Table> tables ;
 		Database();
 		~Database();
 		void add_table(string, Table);
@@ -47,13 +46,14 @@ class Database
 
 class Context
 {
-	private:
+		
+	public:
+
 		Database db;
 		string table;	//To store context of which table is being accessed
 		string column;	//To store context of which column is being accessed
 		function<bool(string, string)> pred;//Predicate for where
 
-	public:
 		Context();
 		~Context();
 		void set_table(string);
@@ -68,33 +68,51 @@ class Context
 
 class Expression
 {
-	virtual vector<string> interpret(Context ctx) = 0;
+public:
+	virtual vector<vector<string>> interpret(Context ctx) = 0;
+	virtual ~Expression() = 0;
+};
+
+class Values: public Expression
+{
+	private:
+		map<string, string> row;
+	public:
+		Values();
+		Values(map<string, string>);
+		vector<vector<string>> interpret(Context ctx); 
 };
 
 class Insert : public Expression
 {
-
-};
-
-class Select : public Expression
-{
 	private:
-
-
+		string table;
+		Values values;
+	public:
+		Insert();
+		Insert(string, Values);
+		vector<vector<string>> interpret(Context ctx); 
 };
 
-class From : public Expression
-{
 
-};
+// class Select : public Expression
+// {
+// 	private:
+		
+// };
 
-class When : public Expression
-{
+// class From : public Expression
+// {
 
-};
+// };
 
-class Delete : public Expression
-{
+// class When : public Expression
+// {
 
-};
+// };
+
+// class Delete : public Expression
+// {
+
+// };
 #endif

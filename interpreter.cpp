@@ -2,9 +2,7 @@
 #include <string>
 
 Table::Table()
-{
-
-}
+{}
 
 Table::Table(string table_name, vector<string> column_names)
 {
@@ -63,7 +61,7 @@ void Table::del_row(int row_num)//delete does not work. have to use references??
 
 		//auto rem = v.begin() + row_num;
 		//cout<<*rem<<"\n";
-    //t[col.first][row_num]=" ";
+    	//t[col.first][row_num]=" ";
 		// for (auto it = col.second.begin(); it != col.second.end(); ++it)
 		// 	cout << ' ' << *it;
 		// cout<<"\n_____\n";
@@ -105,14 +103,10 @@ vector<string> Table::sel_col (string colname)
 }
 
 Table::~Table()
-{
-
-}
+{}
 
 Context::Context()
-{
-
-}
+{}
 
 void Context::set_table(string table_name)
 {
@@ -172,8 +166,7 @@ void Context::clear()
 
 Table Context::get_table()
 {
-	Table current_table;
-	for(auto tab : tables)
+	for(auto tab : db.tables)
 	{
 		if(tab.first == table)
 		{
@@ -219,15 +212,11 @@ vector<vector<string>> Context::search_on_filter(string column_name, function<bo
 // void delete_on_filter(function<bool(string, string)>);
 
 Context::~Context()
-{
-
-}
+{}
 
 
 Database::Database()
-{
-
-}
+{}
 
 void Database::add_table(string table_name, Table table)
 {
@@ -266,11 +255,39 @@ void Database::display_tables()
 	}
 }
 
-
+Expression::~Expression()
+{}
 
 Database::~Database()
-{
+{}
 
+Insert::Insert()
+{}
+
+Insert::Insert(string table_name, Values v): table(table_name), values(v)
+{}
+
+vector<vector<string>> Insert::interpret(Context ctx)
+{
+	ctx.set_table(table);
+	Table t = ctx.get_table();
+	return values.interpret(ctx);
+}
+
+
+Values::Values()
+{}
+
+Values::Values(map<string, string> row_to_be_inserted): row(row_to_be_inserted)
+{}
+
+vector<vector<string>> Values::interpret(Context ctx)
+{
+	Table t = ctx.get_table();
+	t.add_row(row);
+	ctx.db.del_table(ctx.table);
+	ctx.db.add_table(ctx.table, t);
+	return {{"Row added successfully"}};
 }
 
 // void table::interpret(char query[])
