@@ -67,9 +67,10 @@ int main(int argc, char const *argv[])
 	ctx.db.display_tables();
 	ctx.clear();
 
-	// lang_name= "REST_methods";
-	// //string query3 = "IN school POST DATA srn:5,name:Jack,grade:C";
-	// string query3 = "IN t GET A SUCH THAT B = b";
+	lang_name= "REST_methods";
+	//string query3 = "IN school POST DATA srn:5,name:Jack,grade:C";
+	//string query3 = "IN t GET A SUCH THAT B = b";
+	string query3 = "FROM t DELETE IF A = p";
 
 	// if(lang_name=="REST_methods")
 	// {
