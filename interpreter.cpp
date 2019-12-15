@@ -1,6 +1,30 @@
 #include "interpreter.h"
 #include <string>
 
+class isEqual
+{
+	private:
+		string filter_string;
+	public:
+		isEqual(string s) : filter_string(s){}
+		bool operator()(string check)
+		{
+			return filter_string==check;
+		}
+};
+class isNotEqual
+{
+	private:
+		string filter_string;
+	public:
+		isNotEqual(string s) : filter_string(s){}
+		bool operator()(string check)
+		{
+			return filter_string!=check;
+		}
+};
+
+
 Table::Table()
 {}
 
@@ -206,16 +230,23 @@ vector<vector<string>> Context::search_on_filter(string column_name, function<bo
 	    indices.push_back(it - filter_column.begin());
 	}
 	vector<vector<string>> selected_rows;
+	cout << column;
 	for(auto i : indices)
 	{
-		if(column == "*")
-			selected_rows.push_back(t.sel_row(i));
+		if(column=="*")
+		{
+			cout << "STAR";
+			selected_rows.push_back(table.sel_row(i));
+		}
 		else
 		{
+			vector<string> selected_column = t.sel_col(column);
 			vector<string> temp;
-			selected_rows.push_back(temp.push_back(t.sel_col()[i]));
+			temp.push_back(selected_column[i]);
+			selected_rows.push_back(temp);
 		}
 	}
+
 	return selected_rows;
 }
 
@@ -356,12 +387,14 @@ vector<vector<string>> interpret(Context &ctx)
 void display_result(string query, vector<vector<string>> result)
 {
 	cout<<"\n_____________________________________________________\n"<<"Query : "<<query <<endl;
-	cout<<"\nResult of the query is : ";
+	cout<<"\nResult of the query is : \n";
 
 	for (auto i = result.begin(); i != result.end(); ++i)
+	{
   		for (auto j = (*i).begin(); j != (*i).end(); ++j)
 			   cout << *j << " ";
 			cout<<endl;
+	}
 	cout<<"\n_____________________________________________________\n";
 
 }
@@ -400,12 +433,25 @@ vector<vector<string>> SQL::evaluate_query(Context &ctx)
 
 	if(strcmp("SELECT",first.c_str())==0)
 	{
+			//SELECT A FROM t WHERE B = b
+		ctx.column = "*";
+		if(*(tokens.begin()+6) == "=")
+		{
 
-		  //selectfrom(tokens[1]);
+			isEqual equal( *(tokens.begin()+7));
+			result = ctx.search_on_filter(*(tokens.begin()+5), equal);
+		//	Expression *q = new From(*(tokens.begin()+3) , Select(*(tokens.begin()+1) ), Where(*(tokens.begin()+5), isEqual(*(tokens.begin()+7))) ));
+		//	result = q->interpret(ctx);
+		}
+		else if(*(tokens.begin()+6) == "!=")
+		{
+			isNotEqual not_equal( *(tokens.begin()+7));
+			result = ctx.search_on_filter(*(tokens.begin()+5), not_equal);
+		}
+
 	}
 	else if (strcmp("INSERT",first.c_str())==0)
 	{
-		//cout<<"INSERT";
 		// "INSERT INTO t values A:d,B:i,C:y";
 		map<string, string> insert_map;
 
@@ -413,7 +459,7 @@ vector<vector<string>> SQL::evaluate_query(Context &ctx)
 		char v[values.size() + 1];
 		values.copy(v, values.size() + 1);
 		v[values.size()] = '\0';
-		//cout<<v<<endl;
+
 		char *entry = strtok(v, ",");
 		vector<char*> entries;
 	 	while (entry != NULL)
@@ -452,6 +498,10 @@ SQL::~SQL()
 {
 
 }
+
+
+
+
 // void table::interpret(char query[])
 // {
 

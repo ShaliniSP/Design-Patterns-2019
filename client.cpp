@@ -17,12 +17,9 @@ int main(int argc, char const *argv[])
 	t.add_row(n);
 	t.add_row(o);
 	t.add_row(p);
-	
+
 	db.add_table(table_name,t);
 
-
-	char sql_query1[] ="SELECT B FROM t";
-	char sql_query2[] ="DELETE FROM t WHERE B = b";
 
 
 	//Another table
@@ -45,8 +42,11 @@ int main(int argc, char const *argv[])
 
 	string lang_name= "SQL";
 	string query1 = "INSERT INTO t values A:d,B:i,C:y";
-	string query2 = "SELECT A FROM t WHERE B=b";
+  string query2 = "SELECT A FROM t WHERE B = b";
+	//string query2 = "SELECT srn FROM school WHERE grade = A";
+	//string query2 = "INSERT INTO school values srn:3,name:Please,grade:A";
 	vector<vector<string>> result;
+
 	if(lang_name=="SQL")
 	{
 		Language *l = new SQL(query1);
@@ -55,6 +55,16 @@ int main(int argc, char const *argv[])
 	}
 
 	display_result ( query1, result );
+	ctx.db.display_tables();
+
+	if(lang_name=="SQL")
+	{
+		Language *l = new SQL(query2);
+		l->tokenize();
+		result= l->evaluate_query(ctx);
+	}
+
+	display_result ( query2, result );
 	ctx.db.display_tables();
 	//context.interpret(sql_query);
 	//
