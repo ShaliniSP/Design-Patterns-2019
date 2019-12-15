@@ -18,6 +18,7 @@ class Table
 private:
 	string name;
 public:
+	int size;
 	map<string, vector<string>> t;
 	Table();
 	Table(string,vector<string>);
@@ -68,7 +69,7 @@ class Context
 		vector<string> get_column();
 		vector<vector<string>> get_column(int);
 		vector<vector<string>> search_on_filter(string, function<bool(string)>);
-		void delete_on_filter(function<bool(string, string)>);
+		vector<vector<string>> delete_on_filter(string, function<bool(string)>);
 };
 
 class Language
@@ -122,10 +123,10 @@ class Insert : public Expression
 class Where : public Expression
 {
 	private:
-		string filter_col;
 		function<bool(string)> pred;
 
 	public:
+		string filter_col;
 		Where();
 		Where(string, function<bool(string)>);
 		vector<vector<string>> interpret(Context &ctx);
@@ -135,31 +136,49 @@ class Where : public Expression
 class Select : public Expression
 {
 	private:
-		string column;
-		bool isWhere;
 		Where where;
+		bool isWhere;
 	public:
+		string column;
 		Select();
 		Select(string);
 		Select(string, Where);
 		vector<vector<string>> interpret(Context &ctx);
 };
 
+class Delwhere : public Expression
+{
+	private:
+		function<bool(string)> pred;
+
+	public:
+		string filter_col;
+		Delwhere();
+		Delwhere(string, function<bool(string)>);
+		vector<vector<string>> interpret(Context &ctx);
+};
+
+// class Del : public Expression
+// {
+// 	private:
+// 		Delwhere delwhere;
+	
+// 	public:
+// 		Del();
+// 		Del()
+// };
+
 class From : public Expression
 {
 	private:
 		string table;
 		Select select;
-		//Del del;
+		Delwhere del;
 	public:
 		From();
 		From(string, Select);
-		//From(string, Delete);
+		From(string, Delwhere);
 		vector<vector<string>> interpret(Context &ctx);
 };
 
-// class Delete : public Expression
-// {
-
-// };
 #endif

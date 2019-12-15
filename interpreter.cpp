@@ -42,6 +42,7 @@ Table::Table()
 Table::Table(string table_name, vector<string> column_names)
 {
 	name=table_name;
+	size = 0;
 	for(auto name : column_names)
 	{
 		t.insert(pair<string,vector<string> >(name, vector<string>()));
@@ -68,6 +69,7 @@ void Table::add_row(map<string, string> row)
 	{
 		t[r.first].push_back(r.second);
 	}
+	++size;
 	// Context c= Context();
 	// string table_name = name;
 	// //Table table = t;
@@ -98,6 +100,7 @@ void Table::del_row(int row_num)//delete does not work. have to use references??
 
 		t[col.first] = col.second;
 	}
+	--size;
 }
 
 vector<string> Table::sel_row(int row_num)//returns row as vector of strings
@@ -263,7 +266,25 @@ vector<vector<string>> Context::search_on_filter(string column_name, function<bo
 	return selected_rows;
 }
 
-// void delete_on_filter(function<bool(string, string)>);
+vector<vector<string>> Context::delete_on_filter(string column_name, function<bool(string)> pred)
+{
+	Table t = get_table();
+	vector<string> filter_column = t.sel_col(column_name);
+	vector<int> indices;
+	for (auto it = find_if(filter_column.begin(), filter_column.end(), pred); it != filter_column.end(); it = find_if(++it, filter_column.end(), pred))
+	{
+	    indices.push_back(it - filter_column.begin());
+	}
+
+  	for (auto rit = indices.rbegin(); rit!= indices.rend(); ++rit)
+	{
+		cout << *rit;
+		t.del_row(*rit);
+	}
+	
+	db.tables[table] = t;
+	return {{"Deleted ", to_string(indices.size()), " Rows"}};
+}
 
 Context::~Context()
 {}
@@ -349,27 +370,50 @@ vector<vector<string>> Values::interpret(Context &ctx)
 From::From()
 {}
 
-From::From(string table_name, Select s): table(table_name), select(s)
-{}
+From::From(string table_name, Select s)//: table(table_name), select(s), del(Delwhere(string str(" "), isEqual equal(string str(" "))))
+{
+	table = table_name;
+	select = s;
+	string temp = " ";
+	isEqual equal(temp);
+	del = Delwhere(temp, equal);
+}
+
+From::From(string table_name, Delwhere d)//: table(table_name), select(s), 
+{
+	table = table_name;
+	del = d;
+	string temp = " ";
+	isEqual equal(temp);
+	select = Select(temp, Where(temp, equal));
+}
 
 vector<vector<string>> From::interpret(Context &ctx)
 {
 	ctx.set_table(table);
-	return select.interpret(ctx);
+	cout << "From";
+	if(select.column == " ")
+		return del.interpret(ctx);
+	else
+		return select.interpret(ctx);
 }
 
 Select::Select()
 {}
 
 Select::Select(string column_name):column(column), isWhere(false)
-{}
+{
+	cout << "CTOR CALLEd" << column;
+}
 
-Select::Select(string column_name, Where w): column(column_name), isWhere(true), where(w)
+Select::Select(string column_name, Where w): column(column_name), isWhere(where.filter_col == " "? false:true), where(w)
 {}
 
 vector<vector<string>> Select::interpret(Context &ctx)
 {
 	ctx.set_column(column);
+	cout << "COL:" << ctx.column;
+
 	vector<vector<string>> result;
 	if(isWhere)
 	{
@@ -377,6 +421,7 @@ vector<vector<string>> Select::interpret(Context &ctx)
 	}
 	else
 	{
+		cout << "No where";
 		if(column == "*")
 			return ctx.get_column(1);
 		else
@@ -397,6 +442,17 @@ Where::Where(string f_col, function<bool(string)> predicate): filter_col(f_col),
 vector<vector<string>> Where::interpret(Context &ctx)
 {
 	return ctx.search_on_filter(filter_col, pred);
+}
+
+Delwhere::Delwhere()
+{}
+
+Delwhere::Delwhere(string f_col, function<bool(string)> predicate): filter_col(f_col), pred(predicate)
+{}
+
+vector<vector<string>> Delwhere::interpret(Context &ctx)
+{
+	return ctx.delete_on_filter(filter_col, pred);
 }
 
 void display_result(string query, vector<vector<string>> result)
@@ -472,8 +528,11 @@ vector<vector<string>> SQL::evaluate_query(Context &ctx)
 		}
 		else
 		{
-		// 	Expression *q = new From(*(tokens.begin()+3) , Select(*(tokens.begin()+1) ));
-		// 	result = q->interpret(ctx);
+			//cout << *(tokens.begin()+1);
+			string temp = " ";
+			isEqual equal(temp);
+			Expression *q = new From(*(tokens.begin()+3) , Select(*(tokens.begin()+1), Where(temp, equal)));
+			result = q->interpret(ctx);
 		}
 
 	}
@@ -510,7 +569,10 @@ vector<vector<string>> SQL::evaluate_query(Context &ctx)
 	}
 	else if (strcmp("DELETE",first.c_str())==0)
 	{
-
+		isEqual equal("b");
+		result = ctx.delete_on_filter(*(tokens.begin()+4), equal);
+		//Expression *q = new F(*(tokens.begin()+2) , Values(insert_map));
+		//result = q->interpret(ctx);
 	}
 	else
 	{
