@@ -2,6 +2,7 @@
 #define EXPRESSION
 
 #include "interpreter.h"
+#include "predicates.h"
 
 class Expression
 {

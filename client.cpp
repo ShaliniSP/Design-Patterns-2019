@@ -1,7 +1,8 @@
 #include "interpreter.h"
 #include "language.h"
 #include "expression.h"
-
+#include "sql.h"
+#include "rest.h"
 
 int main(int argc, char const *argv[])
 {
