@@ -59,22 +59,9 @@ void Table::del_row(int row_num)//delete does not work. have to use references??
 	{
 		vector<string>::iterator ite = col.second.begin()+row_num;
 
-		//auto rem = v.begin() + row_num;
-		//cout<<*rem<<"\n";
-    	//t[col.first][row_num]=" ";
-		// for (auto it = col.second.begin(); it != col.second.end(); ++it)
-		// 	cout << ' ' << *it;
-		// cout<<"\n_____\n";
 		col.second.erase(col.second.begin()+row_num);
-		// for (auto it = col.second.begin(); it != col.second.end(); ++it)
-		// 	cout << ' ' << *it;
-		//cout<<"\n";
-
 
 		t[col.first] = col.second;
-
-		//cout<<t[col.first][0]<<"_";
-
 	}
 }
 
@@ -106,7 +93,13 @@ Table::~Table()
 {}
 
 Context::Context()
-{}
+{
+
+}
+Context::Context( Database database) : db(database)
+{
+
+}
 
 void Context::set_table(string table_name)
 {
@@ -256,7 +249,7 @@ void Database::del_table(string table_name)
 void Database::display_tables()
 {
 	auto it= tables.begin();
-	cout<<"\nThe Tables in the database are: "<<endl;
+	cout<<"\nThe Tables in the database are:\n "<<endl;
 	for(; it!=tables.end(); ++it)
 	{
 
@@ -277,7 +270,7 @@ Insert::Insert()
 Insert::Insert(string table_name, Values v): table(table_name), values(v)
 {}
 
-vector<vector<string>> Insert::interpret(Context ctx)
+vector<vector<string>> Insert::interpret(Context &ctx)
 {
 	ctx.set_table(table);
 	return values.interpret(ctx);
@@ -290,12 +283,13 @@ Values::Values()
 Values::Values(map<string, string> row_to_be_inserted): row(row_to_be_inserted)
 {}
 
-vector<vector<string>> Values::interpret(Context ctx)
+vector<vector<string>> Values::interpret(Context &ctx)
 {
 	Table t = ctx.get_table();
 	t.add_row(row);
-	ctx.db.del_table(ctx.table);
-	ctx.db.add_table(ctx.table, t);
+	//t.display();
+	ctx.db.tables[ctx.table] = t;
+	//ctx.db.add_table(ctx.table, t);
 	return {{"Row added successfully"}};
 }
 
@@ -387,7 +381,7 @@ void SQL::tokenize()
 
 }
 
-vector<vector<string>> SQL::evaluate_query()
+vector<vector<string>> SQL::evaluate_query(Context &ctx)
 {
 	vector<vector<string>> result;
 	string first = *tokens.begin();
@@ -399,7 +393,35 @@ vector<vector<string>> SQL::evaluate_query()
 	}
 	else if (strcmp("INSERT",first.c_str())==0)
 	{
-		
+		//cout<<"INSERT";
+		// "INSERT INTO t values A:d,B:i,C:y";
+		map<string, string> insert_map;
+
+		string values = *(tokens.begin()+4);
+		char v[values.size() + 1];
+		values.copy(v, values.size() + 1);
+		v[values.size()] = '\0';
+		//cout<<v<<endl;
+		char *entry = strtok(v, ",");
+		vector<char*> entries;
+	 	while (entry != NULL)
+	 	{
+			//cout<<entry<<endl;
+			entries.push_back(entry);
+	 		entry = strtok(NULL, ",");
+	 	}
+		for(auto it= entries.begin(); it!=entries.end(); ++it)
+		{
+
+			char *col = strtok(*it, ":");
+			char *val = strtok(NULL, ":");
+			insert_map.insert({col,val});
+		}
+
+
+		Expression *q = new Insert(*(tokens.begin()+2) , Values(insert_map));
+		result = q->interpret(ctx);
+
 	}
 	else if (strcmp("DELETE",first.c_str())==0)
 	{

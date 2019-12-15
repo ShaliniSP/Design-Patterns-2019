@@ -17,7 +17,7 @@ int main(int argc, char const *argv[])
 	t.add_row(n);
 	t.add_row(o);
 	t.add_row(p);
-	t.display();
+	
 	db.add_table(table_name,t);
 
 
@@ -38,7 +38,11 @@ int main(int argc, char const *argv[])
 	db.display_tables();
 
 
+
 	//Evaluating queries:
+	Context ctx = Context(db);
+
+
 	string lang_name= "SQL";
 	string query1 = "INSERT INTO t values A:d,B:i,C:y";
 	string query2 = "SELECT A FROM t WHERE B=b";
@@ -47,10 +51,11 @@ int main(int argc, char const *argv[])
 	{
 		Language *l = new SQL(query1);
 		l->tokenize();
-		result= l->evaluate_query();
+		result= l->evaluate_query(ctx);
 	}
 
 	display_result ( query1, result );
+	ctx.db.display_tables();
 	//context.interpret(sql_query);
 	//
 	// t.interpret(sql_query1);
