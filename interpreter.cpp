@@ -78,15 +78,41 @@ void Table::add_row(map<string, string> row)
 
 void Table::display()//change to make it display like a table
 {
-	cout<<endl;
+	cout<<"\n";
+	cout<<endl<<"--------------------"<<endl;
 	for(auto col : t)
 	{
-		cout << col.first << " : ";
-		for(auto row : col.second)
-			cout << row << " ";
-		cout << '\n';
+	 	cout << col.first <<"\t";
 	}
-	cout<< '\n';
+	cout<<endl<<"-------------------- "<<endl;
+
+	int num_rows;
+	for(auto col : t)
+	{
+		num_rows= col.second.size();
+	}
+	vector<vector<string>> rows;
+	for(int i=0;i < num_rows; i++)
+	{
+		vector<string> row;
+		for(auto col: t)
+		{
+			vector<string>::iterator ite = col.second.begin()+i;
+			row.push_back(*ite);
+		}
+		rows.push_back(row);
+
+	}
+	for(auto row :rows)
+	{
+		for(auto column: row)
+		{
+			cout<<column<<"\t";
+		}
+		cout<<endl;
+	}
+		cout<<endl;
+
 }
 
 void Table::del_row(int row_num)//delete does not work. have to use references??
@@ -246,12 +272,14 @@ vector<vector<string>> Context::search_on_filter(string column_name, function<bo
 	    indices.push_back(it - filter_column.begin());
 	}
 	vector<vector<string>> selected_rows;
-	cout << column;
+
+
 	for(auto i : indices)
 	{
 		if(column=="*")
 		{
-			cout << "STAR";
+
+
 			selected_rows.push_back(t.sel_row(i));
 		}
 		else
@@ -457,7 +485,7 @@ vector<vector<string>> Delwhere::interpret(Context &ctx)
 
 void display_result(string query, vector<vector<string>> result)
 {
-	cout<<"\n_____________________________________________________\n"<<"Query : "<<query <<endl;
+	cout<<"\n__________________________________________________________________________\n"<<"Query : "<<query <<endl;
 	cout<<"\nResult of the query is : \n";
 
 	for (auto i = result.begin(); i != result.end(); ++i)
@@ -466,7 +494,7 @@ void display_result(string query, vector<vector<string>> result)
 			   cout << *j << " ";
 			cout<<endl;
 	}
-	cout<<"\n_____________________________________________________\n";
+	cout<<"\n__________________________________________________________________________\n";
 
 }
 
@@ -518,13 +546,13 @@ vector<vector<string>> SQL::evaluate_query(Context &ctx)
 			else if(*(tokens.begin()+6) == "!=")
 			{
 				isNotEqual not_equal( *(tokens.begin()+7));
-				result = ctx.search_on_filter(*(tokens.begin()+5), not_equal);
-			}
+				Expression *q = new From(*(tokens.begin()+3) , Select(*(tokens.begin()+1) , Where(*(tokens.begin()+5), not_equal) ));
+				result = q->interpret(ctx);			}
 			else if(*(tokens.begin()+6) == "startswith")
 			{
 				startsWith sw( *(tokens.begin()+7));
-				result = ctx.search_on_filter(*(tokens.begin()+5), sw);
-			}
+				Expression *q = new From(*(tokens.begin()+3) , Select(*(tokens.begin()+1) , Where(*(tokens.begin()+5), sw) ));
+				result = q->interpret(ctx);			}
 		}
 		else
 		{
@@ -583,11 +611,132 @@ vector<vector<string>> SQL::evaluate_query(Context &ctx)
 	return result;
 }
 
+
 SQL::~SQL()
 {
 
 }
 
+
+
+REST_methods::REST_methods(string q) : query(q)
+{
+
+}
+
+void REST_methods::tokenize()
+{
+
+ 	//vector<string> tokens;
+	char q[query.size() + 1];
+	query.copy(q, query.size() + 1);
+	q[query.size()] = '\0';
+ 	char *word = strtok(q, " ");
+
+ 	while (word != NULL)
+ 	{
+ 		tokens.push_back(word);
+ 		word = strtok(NULL, " ");
+ 	}
+
+}
+
+vector<vector<string>> REST_methods::evaluate_query(Context &ctx)
+{
+	vector<vector<string>> result;
+	string first = *(tokens.begin()+2);
+//cout<<*(tokens.begin()+3) ;
+	if(strcmp("GET",first.c_str())==0)
+	{
+		//IN t GET ALL SUCH THAT B = b
+
+		 if(*(tokens.begin()+3) == "ALL")
+		 {
+		 	ctx.column = "*";
+		 }
+		 else{
+			 	ctx.column = *(tokens.begin()+3);
+		 }
+		 cout<<tokens.size();
+		if(tokens.size()==9)
+		{
+			if(*(tokens.begin()+7) == "=")
+			{
+
+				isEqual equal( *(tokens.begin()+8));
+			//	result = ctx.search_on_filter(*(tokens.begin()+5), equal);
+				Expression *q = new From(*(tokens.begin()+1) , Select(ctx.column, Where(*(tokens.begin()+6), equal) ));
+				result = q->interpret(ctx);
+			}
+			else if(*(tokens.begin()+7) == "!=")
+			{
+				isNotEqual not_equal( *(tokens.begin()+8));
+					Expression *q = new From(*(tokens.begin()+1) , Select(ctx.column , Where(*(tokens.begin()+6), not_equal) ));
+					result = q->interpret(ctx);;
+			}
+			else if(*(tokens.begin()+7) == "startswith")
+			{
+				startsWith sw( *(tokens.begin()+8));
+				Expression *q = new From(*(tokens.begin()+1) , Select(ctx.column , Where(*(tokens.begin()+6), sw) ));
+				result = q->interpret(ctx);;
+			}
+		}
+		else
+		{
+			Expression *q = new From(*(tokens.begin()+1) , Select(ctx.column));
+			result = q->interpret(ctx);
+		}
+
+	}
+	else if (strcmp("POST",first.c_str())==0)
+	{
+
+		// "INSERT INTO t values A:d,B:i,C:y";
+		map<string, string> insert_map;
+
+		string values = *(tokens.begin()+4);
+		char v[values.size() + 1];
+		values.copy(v, values.size() + 1);
+		v[values.size()] = '\0';
+
+		char *entry = strtok(v, ",");
+		vector<char*> entries;
+	 	while (entry != NULL)
+	 	{
+			//cout<<entry<<endl;
+			entries.push_back(entry);
+	 		entry = strtok(NULL, ",");
+	 	}
+		for(auto it= entries.begin(); it!=entries.end(); ++it)
+		{
+
+			char *col = strtok(*it, ":");
+			char *val = strtok(NULL, ":");
+			insert_map.insert({col,val});
+		}
+
+
+		Expression *q = new Insert(*(tokens.begin()+1) , Values(insert_map));
+		result = q->interpret(ctx);
+
+	}
+	else if (strcmp("DELETE",first.c_str())==0)
+	{
+
+	}
+	else
+	{
+		vector<string> res;
+		res.push_back("\nThe given query is not found");
+		result.push_back(res);
+	}
+	return result;
+}
+
+REST_methods::~REST_methods()
+{
+
+}
 
 
 
