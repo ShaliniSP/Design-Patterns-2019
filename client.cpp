@@ -42,7 +42,7 @@ int main(int argc, char const *argv[])
 
 	string lang_name= "SQL";
 	string query1 = "INSERT INTO t values A:d,B:i,C:y";
-  string query2 = "SELECT A FROM t WHERE B = b";
+  	string query2 = "SELECT * FROM t WHERE B = b";
 	//string query2 = "SELECT srn FROM school WHERE grade = A";
 	//string query2 = "INSERT INTO school values srn:3,name:Please,grade:A";
 	vector<vector<string>> result;

@@ -221,6 +221,18 @@ vector<string> Context::get_column()
 }
 
 
+vector<vector<string>> Context::get_column(int i)
+{
+	Table current_table = get_table();
+	vector<vector<string>> current_columns;
+
+	for(auto col: current_table.t)
+	{
+		current_columns.push_back(col.second);
+	}
+	return current_columns;
+}
+
 vector<vector<string>> Context::search_on_filter(string column_name, function<bool(string)> pred) //Return indices - rows where filter is true. Needs to be passed to sel_row to return the row
 {
 	Table t = get_table();
@@ -443,9 +455,9 @@ vector<vector<string>> SQL::evaluate_query(Context &ctx)
 			if(*(tokens.begin()+6) == "=")
 			{
 				isEqual equal( *(tokens.begin()+7));
-				result = ctx.search_on_filter(*(tokens.begin()+5), equal);
-			//	Expression *q = new From(*(tokens.begin()+3) , Select(*(tokens.begin()+1) ), Where(*(tokens.begin()+5), isEqual(*(tokens.begin()+7))) ));
-			//	result = q->interpret(ctx);
+			//	result = ctx.search_on_filter(*(tokens.begin()+5), equal);
+				Expression *q = new From(*(tokens.begin()+3) , Select(*(tokens.begin()+1) , Where(*(tokens.begin()+5), equal) ));
+				result = q->interpret(ctx);
 			}
 			else if(*(tokens.begin()+6) == "!=")
 			{
