@@ -37,6 +37,8 @@ class Database
 		map<string, Table> tables ;
 		Database();
 		~Database();
+		// Database(const Database&);
+		// Database& operator=(const Database&);
 		void add_table(string, Table);
 		void display_tables();
 		void del_table(string);
@@ -46,7 +48,7 @@ class Database
 
 class Context
 {
-		
+
 	public:
 
 		Database db;
@@ -55,6 +57,7 @@ class Context
 		function<bool(string, string)> pred;//Predicate for where
 
 		Context();
+		Context(Database);
 		~Context();
 		void set_table(string);
 		void set_column(string);
@@ -71,7 +74,7 @@ class Language
 	public:
 		virtual ~Language() = 0;
 		virtual void tokenize() =0 ;
-		virtual vector<vector<string>> evaluate_query() = 0;
+		virtual vector<vector<string>> evaluate_query(Context &) = 0;
 };
 
 class SQL : public Language
@@ -82,14 +85,14 @@ class SQL : public Language
 	public:
 		SQL(string);
 		void tokenize();
-		vector<vector<string>> evaluate_query();
+		vector<vector<string>> evaluate_query(Context &);
 		~SQL();
 };
 
 class Expression
 {
 public:
-	virtual vector<vector<string>> interpret(Context ctx) = 0;
+	virtual vector<vector<string>> interpret(Context &ctx) = 0;
 	virtual ~Expression() = 0;
 };
 
@@ -100,7 +103,7 @@ class Values: public Expression
 	public:
 		Values();
 		Values(map<string, string>);
-		vector<vector<string>> interpret(Context ctx); 
+		vector<vector<string>> interpret(Context &ctx);
 };
 
 class Insert : public Expression
@@ -111,14 +114,14 @@ class Insert : public Expression
 	public:
 		Insert();
 		Insert(string, Values);
-		vector<vector<string>> interpret(Context ctx); 
+		vector<vector<string>> interpret(Context &ctx);
 };
 
 
 // class Select : public Expression
 // {
 // 	private:
-		
+
 // };
 
 // class From : public Expression
