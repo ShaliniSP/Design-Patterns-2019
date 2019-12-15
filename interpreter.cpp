@@ -236,7 +236,7 @@ vector<vector<string>> Context::search_on_filter(string column_name, function<bo
 		if(column=="*")
 		{
 			cout << "STAR";
-			selected_rows.push_back(table.sel_row(i));
+			selected_rows.push_back(t.sel_row(i));
 		}
 		else
 		{
@@ -331,47 +331,47 @@ vector<vector<string>> Values::interpret(Context &ctx)
 	return {{"Row added successfully"}};
 }
 
-// From::From()
-// {}
+From::From()
+{}
 
-// From::From(string table_name, Select s): table(table_name), select(s)
-// {}
+From::From(string table_name, Select s): table(table_name), select(s)
+{}
 
-// vector<vector<string>> From::interpret(Context ctx)
-// {
-// 	ctx.set_table(table);
-// 	return select.interpret(ctx);
-// }
+vector<vector<string>> From::interpret(Context &ctx)
+{
+	ctx.set_table(table);
+	return select.interpret(ctx);
+}
 
-// Select::Select()
-// {}
+Select::Select()
+{}
 
-// Select::Select(string column_name):column(column)
-// {}
+Select::Select(string column_name):column(column), isWhere(false)
+{}
 
-// // Select::Select(string column_name, Where w): column(column_name), where(w)
-// // {}
+Select::Select(string column_name, Where w): column(column_name), isWhere(true), where(w)
+{}
 
-// vector<vector<string>> Select::interpret(Context ctx)
-// {
-// 	ctx.set_column(column);
-// 	vector<vector<string>> result;
-// 	// if(where)
-// 	// {
-// 	// 	return where.interpret(ctx);
-// 	// }
-// 	//else
-// 	{
-// 		if(column == "*")
-// 			return ctx.get_column(1);
-// 		else
-// 		{
-// 			result.push_back(ctx.get_column());
-// 			return result;
-// 		}
+vector<vector<string>> Select::interpret(Context &ctx)
+{
+	ctx.set_column(column);
+	vector<vector<string>> result;
+	if(isWhere)
+	{
+		return where.interpret(ctx);
+	}
+	else
+	{
+		if(column == "*")
+			return ctx.get_column(1);
+		else
+		{
+			result.push_back(ctx.get_column());
+			return result;
+		}
 
-// 	}
-// }
+	}
+}
 
 Where::Where()
 {}
@@ -379,9 +379,9 @@ Where::Where()
 Where::Where(string f_col, function<bool(string)> predicate): filter_col(f_col), pred(predicate)
 {}
 
-vector<vector<string>> interpret(Context &ctx)
+vector<vector<string>> Where::interpret(Context &ctx)
 {
-	return search_on_filter()
+	return ctx.search_on_filter(filter_col, pred);
 }
 
 void display_result(string query, vector<vector<string>> result)
