@@ -199,16 +199,23 @@ vector<vector<string>> Context::get_column(int i)
 vector<vector<string>> Context::search_on_filter(string column_name, function<bool(string)> pred) //Return indices - rows where filter is true. Needs to be passed to sel_row to return the row
 {
 	Table t = get_table();
-	vector<string> column = t.sel_col(column_name);
+	vector<string> filter_column = t.sel_col(column_name);
 	vector<int> indices;
-	for (auto it = find_if(column.begin(), column.end(), pred); it != column.end(); it = find_if(++it, column.end(), pred))
+	for (auto it = find_if(filter_column.begin(), filter_column.end(), pred); it != filter_column.end(); it = find_if(++it, filter_column.end(), pred))
 	{
-	    indices.push_back(it - column.begin());
+	    indices.push_back(it - filter_column.begin());
 	}
-	Table table = get_table();
 	vector<vector<string>> selected_rows;
 	for(auto i : indices)
-		selected_rows.push_back(table.sel_row(i));
+	{
+		if(column == "*")
+			selected_rows.push_back(t.sel_row(i));
+		else
+		{
+			vector<string> temp;
+			selected_rows.push_back(temp.push_back(t.sel_col()[i]));
+		}
+	}
 	return selected_rows;
 }
 
@@ -293,53 +300,58 @@ vector<vector<string>> Values::interpret(Context &ctx)
 	return {{"Row added successfully"}};
 }
 
-From::From()
-{}
-
-From::From(string table_name, Select s): table(table_name), select(s)
-{}
-
-vector<vector<string>> From::interpret(Context ctx)
-{
-	ctx.set_table(table);
-	return select.interpret(ctx);
-}
-
-Select::Select()
-{}
-
-Select::Select(string column_name):column(column)
-{}
-
-// Select::Select(string column_name, Where w): column(column_name), where(w)
+// From::From()
 // {}
 
-vector<vector<string>> Select::interpret(Context ctx)
-{
-	ctx.set_column(column);
-	vector<vector<string>> result;
-	// if(where)
-	// {
-	// 	return where.interpret(ctx);
-	// }
-	//else
-	{
-		if(column == "*")
-			return ctx.get_column(1);
-		else
-		{
-			result.push_back(ctx.get_column());
-			return result;
-		}
+// From::From(string table_name, Select s): table(table_name), select(s)
+// {}
 
-	}
-}
+// vector<vector<string>> From::interpret(Context ctx)
+// {
+// 	ctx.set_table(table);
+// 	return select.interpret(ctx);
+// }
+
+// Select::Select()
+// {}
+
+// Select::Select(string column_name):column(column)
+// {}
+
+// // Select::Select(string column_name, Where w): column(column_name), where(w)
+// // {}
+
+// vector<vector<string>> Select::interpret(Context ctx)
+// {
+// 	ctx.set_column(column);
+// 	vector<vector<string>> result;
+// 	// if(where)
+// 	// {
+// 	// 	return where.interpret(ctx);
+// 	// }
+// 	//else
+// 	{
+// 		if(column == "*")
+// 			return ctx.get_column(1);
+// 		else
+// 		{
+// 			result.push_back(ctx.get_column());
+// 			return result;
+// 		}
+
+// 	}
+// }
 
 Where::Where()
 {}
 
-Where::Where(function<bool(string)> predicate): pred(predicate)
+Where::Where(string f_col, function<bool(string)> predicate): filter_col(f_col), pred(predicate)
 {}
+
+vector<vector<string>> interpret(Context &ctx)
+{
+	return search_on_filter()
+}
 
 void display_result(string query, vector<vector<string>> result)
 {

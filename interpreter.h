@@ -121,36 +121,39 @@ class Insert : public Expression
 class Where : public Expression
 {
 	private:
+		string filter_col;
 		function<bool(string)> pred;
+
 	public:
 		Where();
-		Where(function<bool(string)>);
+		Where(string, string, function<bool(string)>);
+		vector<vector<string>> interpret(Context &ctx);
 };
 
-class Select : public Expression
-{
-	private:
-		string column;
-		//Where where;
-	public:
-		Select();
-		Select(string);
-		//Select(string, Where);
-		vector<vector<string>> interpret(Context ctx);
-};
+// class Select : public Expression
+// {
+// 	private:
+// 		string column;
+// 		//Where where;
+// 	public:
+// 		Select();
+// 		Select(string);
+// 		//Select(string, Where);
+// 		vector<vector<string>> interpret(Context ctx);
+// };
 
-class From : public Expression
-{
-	private:
-		string table;
-		Select select;
-		//Del del;
-	public:
-		From();
-		From(string, Select);
-		//From(string, Delete);
-		vector<vector<string>> interpret(Context ctx);
-};
+// class From : public Expression
+// {
+// 	private:
+// 		string table;
+// 		Select select;
+// 		//Del del;
+// 	public:
+// 		From();
+// 		From(string, Select);
+// 		//From(string, Delete);
+// 		vector<vector<string>> interpret(Context ctx);
+// };
 
 // class Delete : public Expression
 // {
