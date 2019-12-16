@@ -65,32 +65,24 @@ vector<vector<string>> XML::evaluate_query(Context &ctx)
 	}
 	else if (strcmp("INSERT",first.c_str())==0)
 	{
-		// "INSERT INTO t values A:d,B:i,C:y";
-		map<string, string> insert_map;
+    string table_name = (*(tokens.begin()+1)).substr(1,(*(tokens.begin()+2)).find(">")-1);
+    vector<string> values;
+    map<string, string> insert_map;
+    int index = 2 ;
+    string col = *(values.begin()+index);
+    while(index<values.size())
+    {
+      string column_name = col.substr(2,col.find(">")-2);
+      string val = *(values.begin() + index - 1);
+      //cout<<column_name<<" "<<val<<endl;;
 
-		string values = *(tokens.begin()+4);
-		char v[values.size() + 1];
-		values.copy(v, values.size() + 1);
-		v[values.size()] = '\0';
+      index+=3;
+      col = *(values.begin()+index);
+      insert_map.insert({column_name,val});
 
-		char *entry = strtok(v, ",");
-		vector<char*> entries;
-	 	while (entry != NULL)
-	 	{
-			//cout<<entry<<endl;
-			entries.push_back(entry);
-	 		entry = strtok(NULL, ",");
-	 	}
-		for(auto it= entries.begin(); it!=entries.end(); ++it)
-		{
+    }
 
-			char *col = strtok(*it, ":");
-			char *val = strtok(NULL, ":");
-			insert_map.insert({col,val});
-		}
-
-
-		Expression *q = new Insert(*(tokens.begin()+2) , Values(insert_map));
+		Expression *q = new Insert(table_name , Values(insert_map));
 		result = q->interpret(ctx);
 
 	}

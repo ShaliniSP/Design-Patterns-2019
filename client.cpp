@@ -99,6 +99,7 @@ int main(int argc, char const *argv[])
 			cout<<"\nWrong entry";
 			continue;
 		}
+		display_result ( query, result );
 
 		//ctx.db.display_tables();
 
