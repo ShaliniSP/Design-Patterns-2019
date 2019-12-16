@@ -3,6 +3,7 @@
 #include "expression.h"
 #include "sql.h"
 #include "rest.h"
+#include "xml.h"
 
 int main(int argc, char const *argv[])
 {
@@ -64,7 +65,6 @@ int main(int argc, char const *argv[])
 				Language *l = new SQL(query);
 				l->tokenize();
 				result= l->evaluate_query(ctx);
-				l->display_result(query, result);
 		}
 		else if(choice== "2")
 		{
@@ -75,7 +75,6 @@ int main(int argc, char const *argv[])
 				Language *l = new REST_methods(query);
 				l->tokenize();
 				result= l->evaluate_query(ctx);
-				l->display_result ( query, result );
 		}
 		else if(choice== "3")
 		{
@@ -96,6 +95,7 @@ int main(int argc, char const *argv[])
 			cout<<"\nWrong entry";
 			continue;
 		}
+		display_result ( query, result );
 
 		ctx.db.display_tables();
 
