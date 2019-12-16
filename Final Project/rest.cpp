@@ -64,9 +64,7 @@ vector<vector<string>> REST_methods::evaluate_query(Context &ctx)
 		}
 		else
 		{
-			string temp = " ";
-			isEqual equal(temp);
-			Expression *q = new From(*(tokens.begin()+1) , Select(ctx.column, Where(temp, equal)));
+			Expression *q = new From(*(tokens.begin()+1) , Select(ctx.column));
 			result = q->interpret(ctx);
 		}
 

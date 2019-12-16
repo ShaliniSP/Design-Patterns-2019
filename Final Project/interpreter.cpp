@@ -59,7 +59,6 @@ vector<string> Context::get_column()
 		if(col.first == column)
 		{
 			current_column = col.second;
-			return current_column;
 			break;
 		}
 	}
@@ -133,7 +132,7 @@ vector<vector<string>> Context::delete_on_filter(string column_name, function<bo
 
 	  	for (auto rit = indices.rbegin(); rit!= indices.rend(); ++rit)
 		{
-			cout << *rit;
+			//cout << *rit;
 			t.del_row(*rit);
 		}
 		num_of_del_rows = to_string(indices.size());

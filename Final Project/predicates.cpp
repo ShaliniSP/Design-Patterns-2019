@@ -11,7 +11,7 @@ isNotEqual::isNotEqual(string s) : filter_string(s){}
 
 bool isNotEqual::operator()(string check)
 {
-	return !(filter_string==check);
+	return filter_string!=check;
 }
 
 startsWith::startsWith(string s) : filter_string(s){}

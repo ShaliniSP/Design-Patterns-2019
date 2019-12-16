@@ -57,6 +57,7 @@ int main(int argc, char const *argv[])
 				//query ="SELECT * from t where B = b";
 				getline(cin,query);
 				//cin>>query;
+				cout<<query;
 				//query ="SELECT * FROM t";
 				lang_name= "SQL";
 
@@ -68,6 +69,7 @@ int main(int argc, char const *argv[])
 		{
 			cout<<"Enter query : ";
 			getline(cin,query);
+			cout << query;
 				lang_name= "REST_methods";
 				Language *l = new REST_methods(query);
 				l->tokenize();

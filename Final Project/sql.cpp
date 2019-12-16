@@ -54,10 +54,10 @@ vector<vector<string>> SQL::evaluate_query(Context &ctx)
 		}
 		else
 		{
-
+			//cout << *(tokens.begin()+1);
 			string temp = " ";
 			isEqual equal(temp);
-			Expression *q = new From(*(tokens.begin()+3) , Select(*(tokens.begin()+1), Where(temp, equal)));
+			Expression *q = new From(*(tokens.begin()+3) , Select("*(tokens.begin()+1)", Where(temp, equal)));
 			result = q->interpret(ctx);
 		}
 
@@ -107,7 +107,6 @@ vector<vector<string>> SQL::evaluate_query(Context &ctx)
 				}
 				if(*(tokens.begin()+5) == "!=")
 				{
-					cout << "Not equal";
 							isNotEqual not_equal(*(tokens.begin()+5));
 							//result = ctx.delete_on_filter(*(tokens.begin()+4), equal);
 							Expression *q = new From(*(tokens.begin()+2) ,Delwhere(*(tokens.begin()+4), not_equal ));
