@@ -1,7 +1,7 @@
 CXX=g++
 RM=rm -f
 
-SRCS=interpreter.cpp expression.cpp client.cpp predicates.cpp table.cpp database.cpp sql.cpp rest.cpp language.cpp
+SRCS=interpreter.cpp expression.cpp client.cpp predicates.cpp table.cpp database.cpp sql.cpp rest.cpp language.cpp xml.cpp
 OBJS=$(subst .cpp,.o,$(SRCS))
 
 all: interpret_tool
