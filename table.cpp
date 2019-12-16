@@ -115,5 +115,15 @@ vector<string> Table::sel_col (string colname)
 	}
 }
 
+vector<string> Table::get_col_names()
+{
+	vector<string> col_names;
+	for(auto cols : t)
+	{
+		col_names.push_back(cols.first);
+	}
+	return col_names;
+}
+
 Table::~Table()
 {}

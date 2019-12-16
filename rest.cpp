@@ -149,6 +149,21 @@ vector<vector<string>> REST_methods::evaluate_query(Context &ctx)
 	return result;
 }
 
+void REST_methods::display_result(Context ctx, string query, vector<vector<string>> result)
+{
+	cout<<"\n__________________________________________________________________________\n"<<"Query : "<<query <<endl;
+	cout<<"\nResult of the query is : \n";
+
+	for (auto i = result.begin(); i != result.end(); ++i)
+	{
+  		for (auto j = (*i).begin(); j != (*i).end(); ++j)
+			   cout << *j << " ";
+			cout<<endl;
+	}
+	cout<<"\n__________________________________________________________________________\n";
+
+}
+
 REST_methods::~REST_methods()
 {
 

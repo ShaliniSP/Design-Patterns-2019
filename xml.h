@@ -10,6 +10,7 @@ class XML : public Language
 		XML(string);
 		void tokenize();
 		vector<vector<string>> evaluate_query(Context &);
+		void display_result(Context ctx, string query, vector<vector<string>> result);
 		~XML();
 };
 #endif

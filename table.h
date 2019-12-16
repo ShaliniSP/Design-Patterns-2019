@@ -26,6 +26,7 @@ public:
 	vector<string> sel_row(int row_num);
 	vector<string> sel_col (string colname);
 	void del_row(int row_num); 
+	vector<string> get_col_names();
 
 	~Table();
 };

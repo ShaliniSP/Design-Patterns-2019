@@ -70,13 +70,10 @@ vector<string> Context::get_column()
 vector<vector<string>> Context::get_column(int i)
 {
 	Table current_table = get_table();
-	vector<vector<string>> current_columns;
-
-	for(auto col: current_table.t)
-	{
-		current_columns.push_back(col.second);
-	}
-	return current_columns;
+	vector<vector<string>> rows;
+	for(int i = 0; i < current_table.size; ++i)
+			rows.push_back(current_table.sel_row(i));
+	return rows;
 }
 
 vector<vector<string>> Context::search_on_filter(string column_name, function<bool(string)> pred) //Return indices - rows where filter is true. Needs to be passed to sel_row to return the row

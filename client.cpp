@@ -3,6 +3,7 @@
 #include "expression.h"
 #include "sql.h"
 #include "rest.h"
+#include "xml.h"
 
 int main(int argc, char const *argv[])
 {
@@ -64,28 +65,30 @@ int main(int argc, char const *argv[])
 				Language *l = new SQL(query);
 				l->tokenize();
 				result= l->evaluate_query(ctx);
-				l->display_result(query, result);
+				l->display_result(ctx, query, result);
 		}
 		else if(choice== "2")
 		{
 			cout<<"Enter query : ";
 			getline(cin,query);
 			cout << query;
-				lang_name= "REST_methods";
-				Language *l = new REST_methods(query);
-				l->tokenize();
-				result= l->evaluate_query(ctx);
-				l->display_result ( query, result );
+			lang_name= "REST_methods";
+			Language *l = new REST_methods(query);
+			l->tokenize();
+			result= l->evaluate_query(ctx);
+			l->display_result (ctx,  query, result );
 		}
 		else if(choice== "3")
 		{
 			cout<<"Enter query : ";
 			getline(cin,query);
-			cout << query;
-				lang_name= "XML";
-				Language *l = new XML(query);
-				l->tokenize();
-				result= l->evaluate_query(ctx);
+			//cout << query;
+			lang_name= "XML";
+			Language *l = new XML(query);
+			//l->tokenize();
+			//result= l->evaluate_query(ctx);
+			vector<vector<string>> temp = {{"a", "b", "c"}, {"d", "e", "f"}};
+			l->display_result (ctx,  query, temp );
 		}
 		else if(choice=="4")
 		{
@@ -97,7 +100,7 @@ int main(int argc, char const *argv[])
 			continue;
 		}
 
-		ctx.db.display_tables();
+		//ctx.db.display_tables();
 
 	}
 

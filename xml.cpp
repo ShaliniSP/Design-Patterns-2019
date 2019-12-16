@@ -68,10 +68,10 @@ vector<vector<string>> XML::evaluate_query(Context &ctx)
 		// "INSERT INTO t values A:d,B:i,C:y";
 		map<string, string> insert_map;
 
-		// string values = *(tokens.begin()+4);
-		// char v[values.size() + 1];
-		// values.copy(v, values.size() + 1);
-		// v[values.size()] = '\0';
+		string values = *(tokens.begin()+4);
+		char v[values.size() + 1];
+		values.copy(v, values.size() + 1);
+		v[values.size()] = '\0';
 
 		char *entry = strtok(v, ",");
 		vector<char*> entries;
@@ -103,8 +103,29 @@ vector<vector<string>> XML::evaluate_query(Context &ctx)
 	return result;
 }
 
+void XML::display_result(Context ctx, string query, vector<vector<string>> result)
+{
+	ctx.table  = "t";
+	Table tab = ctx.get_table();
+	vector<string> col = tab.get_col_names();
+	cout<<"\n__________________________________________________________________________\n"<<"Query : "<<query <<endl;
+	cout<<"\nResult of the query is : \n";
+	cout << "<" << ctx.table << ">\n";
+	//for (auto i = result.begin(); i != result.end(); ++i)
+	for(auto i = 0; i < result.size(); ++i)
+	{
+		cout << "\t<row" << /*i <<*/ ">\n";
+  		//for (auto j = (*i).begin(); j != (*i).end(); ++j)
+		for(auto j = 0; j < result[i].size(); ++j)
+			   cout << "\t\t<" << col[j] << ">" << result[i][j] << "<" << col[j] << "/>\n";
+		cout << "\t</row" << /*i <<*/ ">\n\n";
+	}
+	cout << "</" << ctx.table << ">\n";
+	cout<<"\n__________________________________________________________________________\n";
 
-SQL::~SQL()
+}
+
+XML::~XML()
 {
 
 }
