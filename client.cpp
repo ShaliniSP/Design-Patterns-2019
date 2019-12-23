@@ -85,10 +85,10 @@ int main(int argc, char const *argv[])
 			//cout << query;
 			lang_name= "XML";
 			Language *l = new XML(query);
-			//l->tokenize();
-			//result= l->evaluate_query(ctx);
-			vector<vector<string>> temp = {{"a", "b", "c"}, {"d", "e", "f"}};
-			l->display_result (ctx,  query, temp );
+			l->tokenize();
+			result= l->evaluate_query(ctx);
+			//vector<vector<string>> temp = {{"a", "b", "c"}, {"d", "e", "f"}};
+			l->display_result (ctx,  query, result );
 		}
 		else if(choice=="4")
 		{
@@ -99,9 +99,9 @@ int main(int argc, char const *argv[])
 			cout<<"\nWrong entry";
 			continue;
 		}
-		display_result ( query, result );
-
-		//ctx.db.display_tables();
+		//display_result ( query, result );
+		// INSERT <t> <A> q </A> <B> r </B> <C> s </C> </t>
+		ctx.db.display_tables();
 
 	}
 

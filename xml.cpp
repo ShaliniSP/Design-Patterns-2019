@@ -67,6 +67,8 @@ vector<vector<string>> XML::evaluate_query(Context &ctx)
 	{
     string table_name = (*(tokens.begin()+1)).substr(1,(*(tokens.begin()+2)).find(">")-1);
     vector<string> values;
+    for(auto it = tokens.begin()+2; it != tokens.end()-1; ++it)
+    	values.push_back(*it);
     map<string, string> insert_map;
     int index = 2 ;
     string col = *(values.begin()+index);
@@ -74,7 +76,7 @@ vector<vector<string>> XML::evaluate_query(Context &ctx)
     {
       string column_name = col.substr(2,col.find(">")-2);
       string val = *(values.begin() + index - 1);
-      //cout<<column_name<<" "<<val<<endl;;
+      cout<<column_name<<" "<<val<<endl;;
 
       index+=3;
       col = *(values.begin()+index);
@@ -97,22 +99,31 @@ vector<vector<string>> XML::evaluate_query(Context &ctx)
 
 void XML::display_result(Context ctx, string query, vector<vector<string>> result)
 {
-	ctx.table  = "t";
 	Table tab = ctx.get_table();
 	vector<string> col = tab.get_col_names();
 	cout<<"\n__________________________________________________________________________\n"<<"Query : "<<query <<endl;
 	cout<<"\nResult of the query is : \n";
-	cout << "<" << ctx.table << ">\n";
-	//for (auto i = result.begin(); i != result.end(); ++i)
-	for(auto i = 0; i < result.size(); ++i)
+	if(query[0] == 'D')
 	{
-		cout << "\t<row" << /*i <<*/ ">\n";
-  		//for (auto j = (*i).begin(); j != (*i).end(); ++j)
-		for(auto j = 0; j < result[i].size(); ++j)
-			   cout << "\t\t<" << col[j] << ">" << result[i][j] << "<" << col[j] << "/>\n";
-		cout << "\t</row" << /*i <<*/ ">\n\n";
+		cout << "<" << ctx.table << ">\n";
+		for(auto i = 0; i < result.size(); ++i)
+		{
+			cout << "\t<row" << /*i <<*/ ">\n";
+			for(auto j = 0; j < result[i].size(); ++j)
+				   cout << "\t\t<" << col[j] << ">" << result[i][j] << "</" << col[j] << ">\n";
+			cout << "\t</row" << /*i <<*/ ">\n\n";
+		}
+		cout << "</" << ctx.table << ">\n";
 	}
-	cout << "</" << ctx.table << ">\n";
+	else
+	{
+		for (auto i = result.begin(); i != result.end(); ++i)
+		{
+	  		for (auto j = (*i).begin(); j != (*i).end(); ++j)
+				   cout << *j << " ";
+				cout<<endl;
+		}
+	}
 	cout<<"\n__________________________________________________________________________\n";
 
 }
